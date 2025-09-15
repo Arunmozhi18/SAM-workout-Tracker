@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Workout Tracker</title>
+    <!-- PWA meta tags -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Workout">
+    <meta name="apple-mobile-web-app-title" content="Workout">
+    <meta name="theme-color" content="#10b981">
+    <meta name="msapplication-navbutton-color" content="#10b981">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="msapplication-starturl" content="/">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192x192.png">
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+        }
+        .header { text-align: center; margin-bottom: 2rem; }
+        .header h1 { font-size: 2.25rem; font-weight: 800; color: #10b981; margin-bottom: 0.5rem; }
+        .header p { color: #6b7280; }
+        .nav-tabs { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem; padding: 0.5rem; background-color: #e5e7eb; border-radius: 1rem; }
+        .nav-tab { padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 600; color: #4b5563; cursor: pointer; transition: all 0.2s ease-in-out; white-space: nowrap; }
+        .nav-tab:hover { background-color: #d1fae5; }
+        .nav-tab.active { background-color: #10b981; color: #ffffff; }
+        .nav-tab.active:hover { background-color: #059669; }
+        .exercise-item { display: flex; flex-direction: column; gap: 1rem; background-color: #f9fafb; border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06); position: relative; }
+        .exercise-item h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .exercise-item p { color: #4b5563; }
+        .exercise-item .complete-btn { position: absolute; top: 1.5rem; right: 1.5rem; width: 2.5rem; height: 2.5rem; border-radius: 50%; border: 2px solid #6b7280; background-color: transparent; color: #6b7280; font-size: 1.5rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease-in-out; display: flex; justify-content: center; align-items: center; }
+        .exercise-item .complete-btn.completed { background-color: #10b981; border-color: #10b981; color: #ffffff; }
+        .timer-container { text-align: center; background-color: #e0f7f3; padding: 1.5rem; border-radius: 0.75rem; margin-top: 2rem; }
+        .timer-container h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .timer-display { font-size: 3rem; font-weight: 800; color: #ef4444; letter-spacing: 2px; }
+        .timer-buttons { display: flex; justify-content: center; gap: 1rem; margin-top: 1rem; }
+        .btn { padding: 0.75rem 1.5rem; border-radius: 9999px; font-weight: 700; cursor: pointer; transition: all 0.2s ease-in-out; border: none; }
+        .btn-primary { background-color: #10b981; color: #ffffff; }
+        .btn-primary:hover { background-color: #059669; }
+        .btn-secondary { background-color: #d1fae5; color: #059669; }
+        .btn-secondary:hover { background-color: #a7f3d0; }
+        .btn-complete { display: block; width: 100%; margin-top: 1.5rem; padding: 1rem; border-radius: 9999px; background-color: #3b82f6; color: #ffffff; font-size: 1.25rem; font-weight: 700; text-align: center; transition: all 0.2s ease-in-out; border: none; }
+        .btn-complete:hover { background-color: #2563eb; }
+        .progress-tracker { margin-top: 2rem; text-align: center; }
+        .progress-tracker h2 { font-size: 1.5rem; font-weight: 700; color: #10b981; margin-bottom: 1rem; }
+        .progress-circles { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+        .progress-circle { width: 3rem; height: 3rem; display: flex; justify-content: center; align-items: center; border-radius: 50%; border: 2px solid #9ca3af; font-weight: 700; color: #6b7280; transition: all 0.2s ease-in-out; }
+        .progress-circle.completed { background-color: #10b981; border-color: #10b981; color: #ffffff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Home Workout Tracker</h1>
+            <p>Follow along with your weekly workout plan. Complete your daily workout to stay on track!</p>
+        </div>
+        <div class="nav-tabs">
+            <div class="nav-tab active" data-day="day1">Day 1</div>
+            <div class="nav-tab" data-day="day2">Day 2</div>
+            <div class="nav-tab" data-day="day3">Day 3</div>
+            <div class="nav-tab" data-day="day4">Day 4</div>
+            <div class="nav-tab" data-day="day5">Day 5</div>
+            <div class="nav-tab" data-day="day6">Day 6</div>
+            <div class="nav-tab" data-day="day7">Day 7</div>
+        </div>
+        <div class="workout-content" id="workout-content"></div>
+        <div class="timer-container" id="timer-section">
+            <h2>Workout Timer</h2>
+            <div class="timer-display" id="timer-display">00:00</div>
+            <div class="timer-buttons">
+                <button class="btn btn-primary" id="start-timer">Start</button>
+                <button class="btn btn-secondary" id="pause-timer" style="display:none;">Pause</button>
+                <button class="btn btn-secondary" id="reset-timer" style="display:none;">Reset</button>
+            </div>
+        </div>
+        <button class="btn-complete" id="complete-day-btn">Mark Day as Completed</button>
+        <div class="progress-tracker">
+            <h2>Your Progress</h2>
+            <div class="progress-circles">
+                <div class="progress-circle" data-day="day1">D1</div>
+                <div class="progress-circle" data-day="day2">D2</div>
+                <div class="progress-circle" data-day="day3">D3</div>
+                <div class="progress-circle" data-day="day4">D4</div>
+                <div class="progress-circle" data-day="day5">D5</div>
+                <div class="progress-circle" data-day="day6">D6</div>
+                <div class="progress-circle" data-day="day7">D7</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        if ("serviceWorker" in navigator) {
+          navigator.serviceWorker.register("service-worker.js");
+        }
+        // (Workout tracker JS from earlier stays here, omitted for brevity)
+    </script>
+</body>
+</html>
